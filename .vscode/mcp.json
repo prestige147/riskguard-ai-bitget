@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "binance-mcp-server": {
+      "url": "https://agent.binance.com/mcp/agentic",
+      "type": "http"
+    }
+  },
+  "inputs": []
+}
