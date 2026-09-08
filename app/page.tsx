@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 type ActivityStatus = "complete" | "current" | "pending" | "blocked";
 
-export default function Home() {
+export default function Home() {  
   const [approved, setApproved] = useState(false);
   const [riskMessage, setRiskMessage] = useState("");
   const [btcPrice, setBtcPrice] = useState<number | null>(null);
