@@ -1,36 +1,40 @@
-import { NextResponse } from "next/server";
-
-const BINANCE_URLS = [
-  "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT",
-  "https://api1.binance.com/api/v3/ticker/price?symbol=BTCUSDT",
-  "https://api2.binance.com/api/v3/ticker/price?symbol=BTCUSDT",
-];
+﻿import { NextResponse } from "next/server";
 
 export async function GET() {
-  for (const url of BINANCE_URLS) {
-    try {
-      const response = await fetch(url, {
-        cache: "no-store",
-      });
+  try {
+    const response = await fetch(
+      "https://api.bitget.com/api/v3/market/tickers?category=SPOT&symbol=BTCUSDT",
+      { cache: "no-store" }
+    );
 
-      if (!response.ok) continue;
-
-      const data = await response.json();
-      const price = Number(data.price);
-
-      if (data.symbol === "BTCUSDT" && Number.isFinite(price) && price > 0) {
-        return NextResponse.json({
-          symbol: "BTCUSDT",
-          price,
-        });
-      }
-    } catch {
-      continue;
+    if (!response.ok) {
+      throw new Error(`Bitget returned ${response.status}`);
     }
-  }
 
-  return NextResponse.json(
-    { error: "Unable to retrieve BTCUSDT market data." },
-    { status: 502 }
-  );
+    const json = await response.json();
+    const ticker = json?.data?.[0];
+
+    if (!ticker?.lastPrice) {
+      throw new Error("No BTCUSDT price returned by Bitget");
+    }
+
+    return NextResponse.json({
+      symbol: "BTCUSDT",
+      price: Number(ticker.lastPrice),
+      change24h: Number(ticker.price24hPcnt ?? 0) * 100,
+      source: "Bitget",
+      timestamp: Date.now(),
+    });
+  } catch (error) {
+    console.error("Bitget market error:", error);
+
+    return NextResponse.json({
+      symbol: "BTCUSDT",
+      price: 0,
+      change24h: 0,
+      source: "Bitget",
+      error: "Live market data unavailable",
+      timestamp: Date.now(),
+    });
+  }
 }
