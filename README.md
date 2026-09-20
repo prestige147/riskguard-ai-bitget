@@ -85,4 +85,4 @@ No real funds are traded and no withdrawal functionality is enabled.
 
 Built for the Bitget AI × Crypto Hackathon — Genesis Season 2.
 
-Track: Agentic Trading
+Track: AI Trading Desk - Open Theme
